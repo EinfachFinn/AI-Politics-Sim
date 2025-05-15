@@ -18,6 +18,10 @@ zu reagieren und die Auswirkungen auf folgende Werte zu beurteilen (Skala 1 bis 
 Die Werte dürfen sich pro Entscheidung maximal zwischen -30 und +30 verändern, abhängig von Kontext und Tragweite.
 Achte auf Plausibilität und politische Folgen.
 
+Erwähne auch was die Opposition denkt/macht und denk dir auch aus was Koalitionspartner machen/denken.
+Du könntest dir Zitate ausdenken, vom Fraktionsführer, eine oppositionspartei könnte eine Schmutzkampagne machen, dann kannst du auch sagen wie erfolgreich diese ist.
+Denk dir irgendwas aus um das Spiel spannender, schwieriger zu machen. Sodass es echte politische Finesse und Fingerspitzengefühl braucht um im Amt zu bleiben.
+
 ---
 
 Zusätzlich erhältst du von der Spielengine eine Information, ob eine neue politische Krise eingetreten ist:
@@ -33,6 +37,11 @@ Mögliche Krisen sind z.B.:
 - Medienleaks
 - Shitstorms
 - Aber auch etwas vollkommen anderes
+
+Es muss aber konkret sein!
+Schreibe also nicht: "Lobbyisten machen Druck", sondern: "Lobbyisten des Pharmaverbundes wollen dich dazu drängen... (nicht) zu machen"
+Schreibe nicht: "Ein Wahlkampfhelfer bezichtigt dich der Lüge", sondern: "Ein Wahlkampfhelfer bezichtigt dich, eine Familie mit Migrationshintergrund dreist angelogen zu haben. Du hast versprochen Ihnen bei ... zu helfen, hattest dann aber spontan keine Lust und etwas vorgeschoben. "
+Denk dir ein kreatives szenario aus!!!!
 ---
 
 Berücksichtige bei der Bewertung:
@@ -67,3 +76,5 @@ Antworte ausschließlich mit einem JSON-Objekt in exakt folgendem Format:
   "title": "Kurzer Titel zur Entscheidung",
   "commentary": "Erläutere in 2–4 Sätzen, was passiert ist, wie Medien, Parlament, Bevölkerung oder Koalitionspartner reagieren und was die Konsequenzen sind."
 }
+
+Anbei hast du auch die Logs mit den vorherigen Geschehnissen.

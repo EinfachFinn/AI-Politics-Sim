@@ -20,37 +20,22 @@ public class LLMClient {
     private static String API_KEY;
     private static final String LLM_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free";
 
-    public LLMClient() {
-        Path keyPath = Paths.get("src/LLM/API_KEY.txt");
-        if (Files.notExists(keyPath)) {
-            System.out.println("API KEY FILE nicht gefunden.");
-            System.exit(0);
-        }
-        try {
-            API_KEY = Files.readString(keyPath, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-
-
 
     public static String callLLM_Engine(String userInput, Player_stats player, boolean neueKrise) throws IOException, InterruptedException {
-        Path promptPath = Paths.get("src/Game/engineprompt.txt");
+        if(API_KEY == null) {assignKey();}
+        Path promptPath = Paths.get("src/Prompts/engineprompt.txt");
         if (Files.notExists(promptPath)) {
-            System.out.println("Systemprompt nicht gefunden.");
+            System.out.println("Engineprompt nicht gefunden.");
             System.exit(0);
         }
         String systemPrompt = Files.readString(promptPath, StandardCharsets.UTF_8);
 
 
-        Path logPath = Paths.get("src/engine_log.txt");
+        Path logPath = Paths.get(LLM_Logger.ENGINE_LOG_PATH);
         if (Files.notExists(logPath)) {
             System.out.println("Log nicht gefunden.");
             System.exit(0);
+
         }
         String engineLogs = Files.readString(logPath, StandardCharsets.UTF_8);
 
@@ -67,7 +52,7 @@ public class LLMClient {
         json.put("model", LLM_MODEL);
 
         JSONArray messages = new JSONArray();
-        messages.put(new JSONObject().put("role", "system").put("content", systemPrompt += engineLogs));
+        messages.put(new JSONObject().put("role", "system").put("content", systemPrompt + engineLogs));
         messages.put(new JSONObject().put("role", "user").put("content", userMessage.toString()));
 
         json.put("messages", messages);
@@ -93,21 +78,23 @@ public class LLMClient {
 
 
     public static String callLLM_Advisor(String userInput, Player_stats player) throws IOException, InterruptedException {
-        Path promptPath = Paths.get("src/Game/advisorprompt.txt");
+        if(API_KEY == null) {assignKey();}
+
+        Path promptPath = Paths.get("src/Prompts/advisorprompt.txt");
 
         if (Files.notExists(promptPath)) {
-            System.out.println("Systemprompt nicht gefunden.");
+            System.out.println("Advisor prompt nicht gefunden.");
             System.exit(0);
         }
 
-        Path engineLogPath = Paths.get("src/engine_log.txt");
+        Path engineLogPath = Paths.get(LLM_Logger.ENGINE_LOG_PATH);
         if (Files.notExists(engineLogPath)) {
             System.out.println("Log nicht gefunden.");
             System.exit(0);
         }
         String engineLogs = Files.readString(engineLogPath, StandardCharsets.UTF_8);
 
-        Path advisorLogPath = Paths.get("src/advisor_log.txt");
+        Path advisorLogPath = Paths.get(LLM_Logger.ADVISOR_LOG_PATH);
         if (Files.notExists(advisorLogPath)) {
             System.out.println("Log nicht gefunden.");
             System.exit(0);
@@ -117,6 +104,7 @@ public class LLMClient {
         String advisorPrompt = Files.readString(promptPath, StandardCharsets.UTF_8);
         String playerJson = convertPlayerStatsToJsonObject(player).toString();
 
+
         JSONObject userMessage = new JSONObject();
         userMessage.put("entscheidung", userInput);
         userMessage.put("spielerStats", new JSONObject(playerJson));
@@ -125,7 +113,7 @@ public class LLMClient {
         json.put("model", LLM_MODEL);
 
         JSONArray messages = new JSONArray();
-        messages.put(new JSONObject().put("role", "system").put("content", advisorPrompt += engineLogs += advisorLogs));
+        messages.put(new JSONObject().put("role", "system").put("content", advisorPrompt + engineLogs + advisorLogs));
         messages.put(new JSONObject().put("role", "user").put("content", userMessage.toString()));
 
         json.put("messages", messages);
@@ -150,15 +138,6 @@ public class LLMClient {
 
 
 
-
-
-
-
-
-
-
-
-
     private static JSONObject convertPlayerStatsToJsonObject(Player_stats p) {
         JSONObject json = new JSONObject();
         json.put("name", p.getName());
@@ -176,5 +155,19 @@ public class LLMClient {
         json.put("passedLaws", p.getPassedLaws());
         json.put("crisesSurvived", p.getCrisesSurvived());
         return json;
+    }
+
+    private static void assignKey()
+    {
+        Path keyPath = Paths.get("src/API_KEY.txt");
+        if (Files.notExists(keyPath)) {
+            System.out.println("API KEY FILE nicht gefunden.");
+            System.exit(0);
+        }
+        try {
+            API_KEY = Files.readString(keyPath, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

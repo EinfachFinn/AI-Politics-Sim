@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 public class Startchecker {
     public static void main(String[] args) {
-        Path promptPath = Paths.get("src/Game/engineprompt.txt");
+        Path promptPath = Paths.get("src/LLM/API_KEY.txt");
         if(Files.notExists(promptPath)) {
             System.out.println("No file found");
             System.exit(1);

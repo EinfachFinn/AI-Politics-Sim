@@ -11,8 +11,10 @@ public class GameController {
     public GameController() {
         this.player = new Player_stats();
         this.logger = new LLM_Logger();
-        logger.logAdvisor("Das ist das log, des politikberaters. Alle Gespräche sind hier drin: Es ist der erste Tag im Kanzleramt");
-        logger.logEngine("Das ist das log, des Games. Alle Entscheidungen und Folgen sind hier drin: Es ist der erste Tag im Kanzleramt");
+        logger.logAdvisor("Das ist das log, des politikberaters. Alle Gespräche sind hier drin: ");
+        logger.logAdvisor("Es ist der erste Tag im Kanzleramt");
+        logger.logEngine("Das ist das log, des Games. Alle Entscheidungen und Folgen sind hier drin: ");
+        logger.logEngine("Es ist der erste Tag im Kanzleramt");
     }
 
     public void setPlayer(Player_stats player) {this.player = player;}

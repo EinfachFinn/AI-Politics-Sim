@@ -2,11 +2,12 @@ package LLM;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class LLM_Logger {
 
-    private static final String ENGINE_LOG_PATH = "src/temp/engine_log.txt";
-    private static final String ADVISOR_LOG_PATH = "src/temp/advisor_log.txt";
+    public static final String ENGINE_LOG_PATH = "src/temp/engine_log.txt";
+    public static final String ADVISOR_LOG_PATH = "src/temp/advisor_log.txt";
 
     private static boolean engineLogInitialized = false;
     private static boolean advisorLogInitialized = false;
@@ -37,8 +38,9 @@ public class LLM_Logger {
      * Ansonsten wird angehängt.
      */
     private static void writeToFile(String path, String entry, boolean alreadyInitialized) {
+
         try (FileWriter writer = new FileWriter(path, alreadyInitialized)) {
-            writer.write(entry + System.lineSeparator());
+            writer.write("Time: " + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() +" "+ entry + System.lineSeparator());
         } catch (IOException e) {
             System.err.println("Fehler beim Schreiben in " + path + ": " + e.getMessage());
         }

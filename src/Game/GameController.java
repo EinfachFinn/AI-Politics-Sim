@@ -1,5 +1,6 @@
 package Game;
 
+import Frontend.GameWindow;
 import LLM.LLMClient;
 import LLM.LLMResponseParser;
 import LLM.LLM_Logger;
@@ -8,6 +9,11 @@ import java.util.Scanner;
 
 public class GameController {
 
+    public void setWindow(GameWindow window) {
+        this.window = window;
+    }
+
+    private GameWindow window;
     public GameController() {
         this.player = new Player_stats();
         this.logger = new LLM_Logger();
@@ -20,6 +26,7 @@ public class GameController {
     public void setPlayer(Player_stats player) {this.player = player;}
     private Player_stats player;
     private LLM_Logger logger;
+
 
 
 
@@ -83,23 +90,9 @@ public class GameController {
     public void decision()
     {
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nDeine Entscheidung: ");
-
         String input = scanner.nextLine();
-        logger.logEngine(input);
-        boolean neueKrise = Math.random() < 0.2;
-
-        if(neueKrise) {
-            System.out.println("NEUE KRISE");
-        }
-        try {
-            String jsonResponse = LLMClient.callLLM_Engine(input, player, neueKrise);
-            LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger);
-        } catch (Exception e) {
-            System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
-            e.printStackTrace();
-        }
+        sendDecision(input);
     }
 
     public void advisor() {
@@ -108,13 +101,42 @@ public class GameController {
         System.out.print("\nDeine Frage: ");
 
         String input = scanner.nextLine();
-        logger.logAdvisor(input);
+        sendAdvisor(input);
+    }
+
+    public void sendAdvisor(String adviceMessage)
+    {
+
+        logger.logAdvisor(adviceMessage);
         try {
-            String jsonResponse = LLMClient.callLLM_Advisor(input, player);
-            LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger);
+            String jsonResponse = LLMClient.callLLM_Advisor(adviceMessage, player);
+            String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger);
+            System.out.println("Send to window: " + message);
+            window.getAdvisorTextArea().setText(message);
         } catch (Exception e) {
             System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+    public void sendDecision(String decisionMessage)
+    {
+        boolean neueKrise = Math.random() < 0.5;
+        logger.logEngine(decisionMessage);
+        if(neueKrise) {
+            System.out.println("NEUE KRISE");
+        }
+        try {
+            String jsonResponse = LLMClient.callLLM_Engine(decisionMessage, player, neueKrise);
+            String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger);
+            System.out.println("Send to window: " + message);
+            window.getDecisionTextArea().setText(message);
+
+        } catch (Exception e) {
+            System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 }

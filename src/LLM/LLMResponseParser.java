@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class LLMResponseParser {
 
-    public static void parseAndApplyEngineResponse(String jsonString, Player_stats player, LLM_Logger logger) {
+    public static String parseAndApplyEngineResponse(String jsonString, Player_stats player, LLM_Logger logger) {
         try {
             // Den JSON-String in ein JSONObject umwandeln
             JSONObject response = new JSONObject(jsonString);
@@ -29,7 +29,7 @@ public class LLMResponseParser {
             String title = contentJson.getString("title");
             String commentary = contentJson.getString("commentary");
             System.out.println("Titel: " + title);
-            System.out.println("Kommentar: " + commentary);
+            //System.out.println("Kommentar: " + commentary);
 
             logger.logEngine(commentary);
 
@@ -49,9 +49,13 @@ public class LLMResponseParser {
 
             System.out.print(player.toString());
 
+
+            return commentary;
         } catch (Exception e) {
             System.err.println("Fehler beim Verarbeiten: " + e.getMessage());
         }
+
+        return "Error Parsing";
     }
 
     public static String parseAndApplyAdvisorResponse(String jsonString, LLM_Logger logger) {
@@ -61,7 +65,7 @@ public class LLMResponseParser {
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
             logger.logAdvisor(content);
-            System.out.println("Antwort: " + content);
+            //System.out.println("Antwort: " + content);
             return content.trim(); // Optional: Whitespace entfernen
 
         } catch (Exception e) {

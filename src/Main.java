@@ -1,6 +1,8 @@
+import Frontend.GameWindow;
 import Game.GameController;
 import Player.Player_stats;
 
+import javax.swing.*;
 import java.util.Scanner;
 
 public class Main {
@@ -17,6 +19,7 @@ public class Main {
         {
 
             GameController gameController = new GameController();
+            startFrontend(gameController);
             gameController.setupNewPlayer();
             gameController.startGameLoop();
 
@@ -28,6 +31,7 @@ public class Main {
     public static void devStart() {
         System.out.println("Dev Mode!");
         GameController gameController = new GameController();
+        startFrontend(gameController);
         Player_stats player = new Player_stats();
 
         player.setName("Thorben");
@@ -57,5 +61,17 @@ public class Main {
 
         gameController.setPlayer(player);
         gameController.startGameLoop();
+    }
+
+    private static void startFrontend(GameController gameController) {
+        GameWindow gameWindow = new GameWindow(gameController);
+        JFrame frame = new JFrame("Game");
+        frame.setContentPane(new GameWindow(gameController).panel1);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        gameController.setWindow(gameWindow);
+        gameWindow.getAdvisorTextArea().setText("Heeeeyyy");
+        gameWindow.getDecisionTextArea().setText("Testetstetst");
     }
 }

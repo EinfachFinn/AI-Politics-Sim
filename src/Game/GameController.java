@@ -1,6 +1,6 @@
 package Game;
 
-import Frontend.GameWindow;
+import Frontend.ChatUI;
 import LLM.LLMClient;
 import LLM.LLMResponseParser;
 import LLM.LLM_Logger;
@@ -9,11 +9,8 @@ import java.util.Scanner;
 
 public class GameController {
 
-    public void setWindow(GameWindow window) {
-        this.window = window;
-    }
 
-    private GameWindow window;
+
     public GameController() {
         this.player = new Player_stats();
         this.logger = new LLM_Logger();
@@ -27,6 +24,8 @@ public class GameController {
     private Player_stats player;
     private LLM_Logger logger;
 
+    private ChatUI ui;
+    public void setUI(ChatUI ui) {this.ui = ui;}
 
 
 
@@ -74,8 +73,8 @@ public class GameController {
     }
 
     public void startGameLoop() {
-       // logger.logEngine("Erster Tag als neu gewählter Kanzler");
-       // logger.logAdvisor("Erster Tag als neu gewählter Kanzler");
+        // logger.logEngine("Erster Tag als neu gewählter Kanzler");
+        // logger.logAdvisor("Erster Tag als neu gewählter Kanzler");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -110,9 +109,8 @@ public class GameController {
         logger.logAdvisor(adviceMessage);
         try {
             String jsonResponse = LLMClient.callLLM_Advisor(adviceMessage, player);
-            String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger);
-            System.out.println("Send to window: " + message);
-            window.getAdvisorTextArea().setText(message);
+            String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger, ui);
+
         } catch (Exception e) {
             System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
             e.printStackTrace();
@@ -125,12 +123,11 @@ public class GameController {
         logger.logEngine(decisionMessage);
         if(neueKrise) {
             System.out.println("NEUE KRISE");
+            ui.printKriseAll();
         }
         try {
             String jsonResponse = LLMClient.callLLM_Engine(decisionMessage, player, neueKrise);
-            String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger);
-            System.out.println("Send to window: " + message);
-            window.getDecisionTextArea().setText(message);
+            String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger, ui);
 
         } catch (Exception e) {
             System.out.println("Fehler beim Verarbeiten: " + e.getMessage());

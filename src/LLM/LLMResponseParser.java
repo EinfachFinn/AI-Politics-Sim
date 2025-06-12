@@ -1,11 +1,12 @@
 package LLM;
 
+import Frontend.ChatUI;
 import Player.Player_stats;
 import org.json.JSONObject;
 
 public class LLMResponseParser {
 
-    public static String parseAndApplyEngineResponse(String jsonString, Player_stats player, LLM_Logger logger) {
+    public static String parseAndApplyEngineResponse(String jsonString, Player_stats player, LLM_Logger logger, ChatUI ui) {
         try {
             // Den JSON-String in ein JSONObject umwandeln
             JSONObject response = new JSONObject(jsonString);
@@ -29,7 +30,8 @@ public class LLMResponseParser {
             String title = contentJson.getString("title");
             String commentary = contentJson.getString("commentary");
             System.out.println("Titel: " + title);
-            //System.out.println("Kommentar: " + commentary);
+            System.out.println("Kommentar: " + commentary);
+            ui.printMainAnswer(title, commentary);
 
             logger.logEngine(commentary);
 
@@ -58,15 +60,15 @@ public class LLMResponseParser {
         return "Error Parsing";
     }
 
-    public static String parseAndApplyAdvisorResponse(String jsonString, LLM_Logger logger) {
+    public static String parseAndApplyAdvisorResponse(String jsonString, LLM_Logger logger, ChatUI ui) {
         try {
             JSONObject response = new JSONObject(jsonString);
             JSONObject choice = response.getJSONArray("choices").getJSONObject(0);
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
             logger.logAdvisor(content);
-            //System.out.println("Antwort: " + content);
-            return content.trim(); // Optional: Whitespace entfernen
+            ui.printMiniAnswer("Neue Nachricht:" , content);
+            return content.trim();
 
         } catch (Exception e) {
             System.err.println("Fehler beim Verarbeiten (Advisor): " + e.getMessage());

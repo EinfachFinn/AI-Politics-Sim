@@ -25,7 +25,6 @@ public class Player_stats {
 
 
 
-
     public String toString() {
         return "player_stats{" +
                 ", yearsInOffice=" + yearsInOffice +

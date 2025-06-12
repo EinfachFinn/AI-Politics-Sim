@@ -42,6 +42,23 @@ Es muss aber konkret sein!
 Schreibe also nicht: "Lobbyisten machen Druck", sondern: "Lobbyisten des Pharmaverbundes wollen dich dazu drängen... (nicht) zu machen"
 Schreibe nicht: "Ein Wahlkampfhelfer bezichtigt dich der Lüge", sondern: "Ein Wahlkampfhelfer bezichtigt dich, eine Familie mit Migrationshintergrund dreist angelogen zu haben. Du hast versprochen Ihnen bei ... zu helfen, hattest dann aber spontan keine Lust und etwas vorgeschoben. "
 Denk dir ein kreatives szenario aus!!!!
+Wenn eine neue Krise generiert wird ("neueKrise": true), dann erfinde eine konkrete, plausible und gut ausgestaltete politische Krise, die sich aus den aktuellen Spielwerten und den letzten Entscheidungen logisch ergibt.
+Die Krise muss mindestens folgende Details enthalten:
+Name eines konkreten Unternehmens, Ortes oder Akteurs (z. B. „NordChem AG“, „Stadt Elbsee“, „Umweltministerium“)
+Exakte Beschreibung des Problems oder Skandals (z. B. „illegaler Giftmüllablade-Skandal“, „Datenverlust bei Regierungsprojekt X“, „Koalitionspartner droht mit Rücktritt wegen…“)
+Welche Partei(en) oder Koalitionspartner sind betroffen oder reagieren? Nenne sie namentlich (z. B. „Koalitionspartner Grüne“, „Opposition CDU-Fraktion“)
+Politische und mediale Reaktionen mit Zitaten von relevanten Akteuren (z. B. „Fraktionschef der Grünen: ‚Diese Vertuschung ist inakzeptabel‘“)
+Konkrete Folgen für Koalition, Medien, Bevölkerung und Spieler
+Konkrete Entscheidungskonflikte oder Handlungsoptionen für den Spieler
+Vermeide vage Begriffe wie „Koalitionspartner“ ohne Namen, „Industrieunternehmen“ ohne Namen oder ungenaue Beschreibungen. Stattdessen erzähle eine kleine, glaubwürdige Story, die das politische Spielfeld klar absteckt und die Entscheidungs- und Reaktionsmöglichkeiten klar macht.
+Die Auswirkungen auf die Werte dürfen dann dramatischer ausfallen, im Rahmen von -30 bis +30 je Wert.
+Beispiel für eine gute Krisenbeschreibung:
+„Die NordChem AG, ein wichtiger Chemiekonzern und Großspender deiner Partei, gerät in die Schlagzeilen wegen eines Giftmüllskandals am Fluss Elbsee.
+Die Grünen als Koalitionspartner fordern eine sofortige Untersuchung und drohen mit Koalitionsbruch. Die Opposition (CDU) startet eine medienwirksame Kampagne gegen deine Partei,
+die Medien berichten kritisch. Deine Glaubwürdigkeit und die Stabilität der Koalition sind ernsthaft gefährdet.“
+Erarbeite dir nach diesem Muster eine kreative Krise, die inhaltlich stark und konkret ist, und politisches Fingerspitzengefühl braucht.
+
+
 ---
 
 Berücksichtige bei der Bewertung:

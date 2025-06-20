@@ -2,7 +2,7 @@
 # AI-Politics-Sim
 
 Politik - Fight The AI
-
+y
 
 
 ## Dependencies
@@ -35,6 +35,8 @@ Clone the repo, install the dependencies, and you’re ready to go.
 
 🔑 API Key Setup
 To connect with the LLM backend (e.g., Together AI), you'll need an API key.
+
+Hey, just a quick note: I won’t be adding my API key to any public GitHub profile or repository for security reasons. Thanks for understanding!
 
 Options:
 1. Ask Finn Behrens for an API KEY

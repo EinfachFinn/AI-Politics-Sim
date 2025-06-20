@@ -19,7 +19,8 @@ public class LLMClient {
     private static final String API_URL = "https://api.together.xyz/v1/chat/completions";
     private static String API_KEY;
     private static final String LLM_MODEL = "deepseek-ai/DeepSeek-V3";
-    //preferred Model: "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+    //free Model: "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+    //preferred Model: "deepseek-ai/DeepSeek-V3"
 
     public static String callLLM_Engine(String userInput, Player_stats player, boolean neueKrise) throws IOException, InterruptedException {
         if(API_KEY == null) {assignKey();}

@@ -5,6 +5,9 @@ import LLM.LLMClient;
 import LLM.LLMResponseParser;
 import LLM.LLM_Logger;
 import Player.Player_stats;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.Scanner;
 
 public class GameController {
@@ -103,36 +106,48 @@ public class GameController {
         sendAdvisor(input);
     }
 
-    public void sendAdvisor(String adviceMessage)
-    {
-
+    public void sendAdvisor(String adviceMessage) {
         logger.logAdvisor(adviceMessage);
-        try {
-            String jsonResponse = LLMClient.callLLM_Advisor(adviceMessage, player);
-            String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger, ui);
 
-        } catch (Exception e) {
-            System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Cursor auf Warten setzen
+        ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        new Thread(() -> {
+            try {
+                String jsonResponse = LLMClient.callLLM_Advisor(adviceMessage, player);
+                String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger, ui);
+            } catch (Exception e) {
+                System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                // Cursor zurücksetzen – wichtig: im Swing-Thread
+                SwingUtilities.invokeLater(() -> ui.setCursor(Cursor.getDefaultCursor()));
+            }
+        }).start();
     }
 
-    public void sendDecision(String decisionMessage)
-    {
+    public void sendDecision(String decisionMessage) {
         boolean neueKrise = Math.random() < 0.5;
         logger.logEngine(decisionMessage);
-        if(neueKrise) {
+
+        if (neueKrise) {
             System.out.println("NEUE KRISE");
             ui.printKriseAll();
         }
-        try {
-            String jsonResponse = LLMClient.callLLM_Engine(decisionMessage, player, neueKrise);
-            String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger, ui);
 
-        } catch (Exception e) {
-            System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
-            e.printStackTrace();
-        }
+        ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        new Thread(() -> {
+            try {
+                String jsonResponse = LLMClient.callLLM_Engine(decisionMessage, player, neueKrise);
+                String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger, ui);
+            } catch (Exception e) {
+                System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                SwingUtilities.invokeLater(() -> ui.setCursor(Cursor.getDefaultCursor()));
+            }
+        }).start();
     }
 
 

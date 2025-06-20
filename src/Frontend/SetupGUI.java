@@ -40,7 +40,7 @@ public class SetupGUI extends JFrame {
         partyNameField = createInputField(mainPanel, "Wie soll deine Partei heißen?");
         ideologyField = createInputField(mainPanel, "Welche Ideologie verfolgst du?");
         coalitionField = createInputField(mainPanel, "Mit wem koalierst du?");
-        ageField = createInputField(mainPanel, "📅 Wie alt bist du?");
+        ageField = createInputField(mainPanel, "Wie alt bist du?");
 
         // Button
         JButton submitButton = new JButton("Bestätigen");

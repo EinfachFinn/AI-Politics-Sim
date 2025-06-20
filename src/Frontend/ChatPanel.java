@@ -1,109 +1,82 @@
 package Frontend;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
-public class ChatPanel extends JPanel {
-    private JTextPane chatArea;
-    private JTextField inputField;
-    private JButton sendButton;
-    private BufferedImage backgroundImg;
-    private final boolean isMiniPanel;
+public abstract class ChatPanel extends JPanel {
+    protected JTextPane chatArea;
+    protected JTextField inputField;
+    protected JButton sendButton;
+    protected BufferedImage backgroundImg;
 
-    public JTextPane getChatArea() {return chatArea;}
+    public JTextPane getChatArea() { return chatArea; }
+    public JTextField getInputField() { return inputField; }
+    public JButton getSendButton() { return sendButton; }
+    public void clearInput() { inputField.setText(""); }
 
-
-    public ChatPanel(Path imagepath, Boolean isMiniPanel) {
-        setLayout(new BorderLayout());
-            this.isMiniPanel = isMiniPanel;
-
-
-            chatArea = new JTextPane() {
+    protected void setupChatArea() {
+        chatArea = new JTextPane() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f)); // 70% sichtbar
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.95f));
                 g2.setColor(getBackground());
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
-        chatArea.setOpaque(false); // wichtig für Transparenz5
-        chatArea.setBackground(new Color(255, 255, 255, 220)); // halbtransparentes Weiß
+        chatArea.setOpaque(false);
+        chatArea.setBackground(new Color(30, 30, 47, 200));
         chatArea.setEditable(false);
+        chatArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+    }
 
-        JScrollPane scrollPane = new JScrollPane(chatArea);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-
-        JPanel chatWrapper = new JPanel(new BorderLayout());
-        chatWrapper.setOpaque(false); // damit Hintergrund durchscheint
-
-        JPanel leftSpacer = new JPanel();
-        leftSpacer.setPreferredSize(new Dimension(50, 0)); // ca. 10% bei 600px
-        leftSpacer.setOpaque(false);
-
-        JPanel rightSpacer = new JPanel();
-        rightSpacer.setPreferredSize(new Dimension(50,0));
-        rightSpacer.setOpaque(false);
-
-        chatWrapper.add(leftSpacer, BorderLayout.WEST);
-        chatWrapper.add(scrollPane, BorderLayout.CENTER);
-        chatWrapper.add(rightSpacer, BorderLayout.EAST);
-
-
-
+    protected void setupInputField() {
         inputField = new JTextField();
-        sendButton = new JButton("Send");
+        inputField.setBackground(new Color(40, 40, 60));
+        inputField.setForeground(Color.WHITE);
+        inputField.setCaretColor(Color.WHITE);
+        inputField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        inputField.setBorder(new EmptyBorder(8, 12, 8, 12));
+    }
 
-        JPanel inputPanel = new JPanel(new BorderLayout());
-        inputPanel.add(inputField, BorderLayout.CENTER);
-        inputPanel.add(sendButton, BorderLayout.EAST);
+    protected void setupSendButton() {
+        sendButton = new JButton("Senden");
+        sendButton.setBackground(new Color(79, 195, 247));
+        sendButton.setForeground(Color.WHITE);
+        sendButton.setFocusPainted(false);
+        sendButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        sendButton.setBorder(new EmptyBorder(8, 20, 8, 20));
+        sendButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        add(chatWrapper, BorderLayout.CENTER);
-
-        add(inputPanel, BorderLayout.SOUTH);
-
-        // Bild laden
-        try {
-            backgroundImg = ImageIO.read(imagepath.toFile());
-            if(backgroundImg == null) {
-                System.out.println("Background image not found");
+        sendButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                sendButton.setBackground(new Color(69, 175, 227));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            backgroundImg = null;
-        }
-    }
-
-
-
-
-
-    public JTextField getInputField() {
-        return inputField;
-    }
-
-    public JButton getSendButton() {
-        return sendButton;
-    }
-
-    public void clearInput() {
-        inputField.setText("");
+            @Override
+            public void mouseExited(MouseEvent e) {
+                sendButton.setBackground(new Color(79, 195, 247));
+            }
+        });
     }
 
     public void appendUserMessage(String msg) {
-        appendStyledText("Du: " + msg + "\n", new Color(0, 128, 255), false, false);
+        appendStyledText("Du: " + msg + "\n", new Color(79, 195, 247), false, false);
     }
 
     public void appendAnswerMessage(String headline, String answer) {
-        appendStyledText(headline + "\n", Color.BLACK, true, true);
-        appendStyledText(answer + "\n\n", Color.DARK_GRAY, false, false);
+        appendStyledText(headline + "\n", Color.WHITE, true, true);
+        appendStyledText(answer + "\n\n", Color.LIGHT_GRAY, false, false);
     }
 
     public void appendStyledText(String text, Color color, boolean bold, boolean headline) {
@@ -111,13 +84,17 @@ public class ChatPanel extends JPanel {
         SimpleAttributeSet style = new SimpleAttributeSet();
         StyleConstants.setForeground(style, color);
         StyleConstants.setBold(style, bold);
+        StyleConstants.setFontFamily(style, "Segoe UI");
+        StyleConstants.setLineSpacing(style, 0.2f);
+
         if (headline) {
             StyleConstants.setFontSize(style, 16);
             StyleConstants.setAlignment(style, StyleConstants.ALIGN_CENTER);
         } else {
-            StyleConstants.setFontSize(style, 13);
+            StyleConstants.setFontSize(style, 14);
             StyleConstants.setAlignment(style, StyleConstants.ALIGN_LEFT);
         }
+
         try {
             int len = doc.getLength();
             doc.insertString(len, text, style);
@@ -134,6 +111,7 @@ public class ChatPanel extends JPanel {
         StyleConstants.setForeground(style, Color.RED);
         StyleConstants.setBold(style, true);
         StyleConstants.setFontSize(style, 32);
+        StyleConstants.setFontFamily(style, "Segoe UI");
         StyleConstants.setAlignment(style, StyleConstants.ALIGN_CENTER);
 
         try {
@@ -146,50 +124,31 @@ public class ChatPanel extends JPanel {
         }
     }
 
-
-
-
-
+    protected void loadBackground(Path path) {
+        try {
+            backgroundImg = ImageIO.read(path.toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            backgroundImg = null;
+        }
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         if (backgroundImg != null) {
             int panelWidth = getWidth();
             int panelHeight = getHeight();
             int imgWidth = backgroundImg.getWidth();
             int imgHeight = backgroundImg.getHeight();
 
-            double scale;
-            int drawWidth, drawHeight;
-
-            if (isMiniPanel) {
-                // Mini-Panel: Skaliere zur Breite, begrenze Höhe
-                scale = (double) panelWidth / imgWidth;
-                drawHeight = (int) (imgHeight * scale);
-
-                // Falls Höhe überschritten wird, neu skalieren
-                if (drawHeight > panelHeight) {
-                    scale = (double) panelHeight / imgHeight;
-                }
-            } else {
-                // Main-Panel: Cover-Verhalten (vorherige Logik)
-                scale = Math.max(
-                        (double) panelWidth / imgWidth,
-                        (double) panelHeight / imgHeight
-                );
-            }
-
-            drawWidth = (int) (imgWidth * scale);
-            drawHeight = (int) (imgHeight * scale);
-
-            // Positionierung
-            int x = isMiniPanel ? panelWidth - drawWidth : (panelWidth - drawWidth)/2;
-            int y = isMiniPanel ? panelHeight - drawHeight : (panelHeight - drawHeight)/2;
+            double scale = Math.max((double) panelWidth / imgWidth, (double) panelHeight / imgHeight);
+            int drawWidth = (int) (imgWidth * scale);
+            int drawHeight = (int) (imgHeight * scale);
+            int x = (panelWidth - drawWidth) / 2;
+            int y = (panelHeight - drawHeight) / 2;
 
             g.drawImage(backgroundImg, x, y, drawWidth, drawHeight, this);
         }
     }
-
 }

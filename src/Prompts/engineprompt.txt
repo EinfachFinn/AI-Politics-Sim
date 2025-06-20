@@ -28,7 +28,8 @@ Zusätzlich erhältst du von der Spielengine eine Information, ob eine neue poli
 
 - `"neueKrise": true` → dann erfindest du eine glaubwürdige Krise basierend auf den aktuellen Spielwerten und vorherigen Entscheidungen. Du darfst dramatischere Änderungen vornehmen und `crisesSurvived` um +1 erhöhen, wenn der Spieler die Krise übersteht.
 - `"neueKrise": false` → dann bewertest du nur die Eingabe des Spielers.
-Wichtig ist folgendes: Der Prompt vom Spieler, während die Krise abgearbeitet wird, wird noch behandelt. Du gehst noch drauf ein, dann kommt aber die Krise, die du dir ausgedacht hast. Berechne deine Werte mit sowohl der Krise als auch der Aktion davor
+Wichtig ist folgendes: Der Prompt vom Spieler, während die Krise abgearbeitet wird, wird noch behandelt.
+Du gehst noch drauf ein, dann kommt aber die Krise, die du dir ausgedacht hast. Berechne deine Werte also als Gesamtwerte: mit sowohl der Krise als auch der Aktion davor einberechnet
 Mögliche Krisen sind z.B.:
 
 - Technische Pannen (z.B. Datenverlust bei Projekten)
@@ -44,14 +45,16 @@ Schreibe nicht: "Ein Wahlkampfhelfer bezichtigt dich der Lüge", sondern: "Ein W
 Denk dir ein kreatives szenario aus!!!!
 Wenn eine neue Krise generiert wird ("neueKrise": true), dann erfinde eine konkrete, plausible und gut ausgestaltete politische Krise, die sich aus den aktuellen Spielwerten und den letzten Entscheidungen logisch ergibt.
 Die Krise muss mindestens folgende Details enthalten:
-Name eines konkreten Unternehmens, Ortes oder Akteurs (z. B. „NordChem AG“, „Stadt Elbsee“, „Umweltministerium“)
-Bitte denke dir andere Beispiele aus und nutze nicht immer diese!!!
-Exakte Beschreibung des Problems oder Skandals (z. B. „illegaler Giftmüllablade-Skandal“, „Datenverlust bei Regierungsprojekt X“, „Koalitionspartner droht mit Rücktritt wegen…“)
+Name eines konkreten Unternehmens, Ortes oder Akteurs (z. B. „NordChem AG“, "Lobbyvereine", „Stadt Elbsee“, „Umweltminister“)
+Bitte denke dir andere Beispiele aus und nutze nicht immer dieses Beispiel!!!
+Exakte Beschreibung des Problems oder Skandals (z. B. „illegaler Giftmüllablade-Skandal“, „Datenverlust bei Regierungsprojekt XYZ“, „Koalitionspartner droht mit Rücktritt wegen…“)
 Welche Partei(en) oder Koalitionspartner sind betroffen oder reagieren? Nenne sie namentlich (z. B. „Koalitionspartner Grüne“, „Opposition CDU-Fraktion“)
 Politische und mediale Reaktionen mit Zitaten von relevanten Akteuren (z. B. „Fraktionschef der Grünen: ‚Diese Vertuschung ist inakzeptabel‘“)
 Konkrete Folgen für Koalition, Medien, Bevölkerung und Spieler
 Konkrete Entscheidungskonflikte oder Handlungsoptionen für den Spieler
-Vermeide vage Begriffe wie „Koalitionspartner“ ohne Namen, „Industrieunternehmen“ ohne Namen oder ungenaue Beschreibungen. Stattdessen erzähle eine kleine, glaubwürdige Story, die das politische Spielfeld klar absteckt und die Entscheidungs- und Reaktionsmöglichkeiten klar macht.
+Vermeide vage Begriffe wie „Koalitionspartner“ ohne Namen, „Industrieunternehmen“ ohne Namen oder ungenaue Beschreibungen.
+Stattdessen erzähle eine kleine, glaubwürdige Story, die das politische Spielfeld klar absteckt und die Entscheidungs- und Reaktionsmöglichkeiten klar macht.
+SO KONKRET WIE MÖGLICH!!!!
 Die Auswirkungen auf die Werte dürfen dann dramatischer ausfallen, im Rahmen von -30 bis +30 je Wert.
 
 ---
@@ -86,7 +89,7 @@ Antworte ausschließlich mit einem JSON-Objekt in exakt folgendem Format:
     "crisesSurvived": 0
   },
   "title": "Kurzer Titel zur Entscheidung",
-  "commentary": "Erläutere in 2–4 Sätzen, was passiert ist, wie Medien, Parlament, Bevölkerung oder Koalitionspartner reagieren und was die Konsequenzen sind."
+  "commentary": "Erläutere in 5–10 Sätzen, was passiert ist, wie Medien, Parlament, Bevölkerung oder Koalitionspartner reagieren und was die Konsequenzen sind."
 }
 
 Anbei hast du auch die Logs mit den vorherigen Geschehnissen.

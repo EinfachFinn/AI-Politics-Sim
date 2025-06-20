@@ -1,28 +1,73 @@
+/*
+ * Refined version of your ChatUI application for a modern and sleek look.
+ * Enhancements:
+ * - Improved scroll bar
+ * - Responsive message bubbles with max width
+ * - Antialiased rendering for smooth visuals
+ * - Consistent styling across components
+ */
+
 package Frontend;
 
 import Game.GameController;
 import Player.Player_stats;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ChatUI extends JFrame {
 
-    private ChatPanel mainChatPanel;
-    private ChatPanel miniChatPanel;
+    private final MainChatPanel mainChatPanel;
+    private final AdvisorChatPanel miniChatPanel;
 
     private GameController gameController;
     private Player_stats playerStats;
 
-    // Fortschrittsbalken
-    private JProgressBar trustBar;
-    private JProgressBar mediaBar;
-    private JProgressBar coalitionBar;
-    private JProgressBar healthBar;
-    private JProgressBar stressBar;
-    private JProgressBar yearsInOfficeBar;
+    private JProgressBar trustBar, mediaBar, coalitionBar, healthBar, stressBar, yearsInOfficeBar;
+
+    public ChatUI() {
+        setTitle("Politik-Simulator 2025");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(1200, 720);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception ignored) {}
+
+        mainChatPanel = new MainChatPanel(Paths.get("src/background.png"));
+        miniChatPanel = new AdvisorChatPanel(Paths.get("src/advisorbackground.png"));
+
+        JTabbedPane rightTabs = new JTabbedPane();
+        rightTabs.setUI(new ModernTabbedPaneUI());
+        rightTabs.setBackground(new Color(30, 30, 47));
+        rightTabs.setForeground(Color.BLACK);
+        UIManager.put("TabbedPane.selected", new Color(50, 50, 70));
+        UIManager.put("TabbedPane.contentAreaColor", new Color(30, 30, 47));
+
+        rightTabs.addTab("Umfragewerte", createProgressPanel());
+        rightTabs.addTab("Berater", miniChatPanel);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainChatPanel, rightTabs);
+        splitPane.setDividerLocation(850);
+        splitPane.setDividerSize(10);
+        splitPane.setBackground(new Color(45, 45, 60));
+
+        add(splitPane, BorderLayout.CENTER);
+
+        mainChatPanel.getSendButton().addActionListener(e -> {
+            String text = mainChatPanel.getInputField().getText().trim();
+            if (!text.isEmpty()) sendMainChat(text);
+        });
+
+        miniChatPanel.getSendButton().addActionListener(e -> {
+            String text = miniChatPanel.getInputField().getText().trim();
+            if (!text.isEmpty()) sendMiniChat(text);
+        });
+    }
 
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
@@ -32,51 +77,9 @@ public class ChatUI extends JFrame {
         this.playerStats = playerStats;
     }
 
-    public ChatUI() {
-        setTitle("Chat Anwendung");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
-        setLocationRelativeTo(null);
-
-// In ChatUI-Konstruktor:
-        mainChatPanel = new ChatPanel(Paths.get("src/background.png"), false);
-        miniChatPanel = new ChatPanel(Paths.get("src/advisorbackground.png"), true);
-
-
-        JTabbedPane rightTabs = new JTabbedPane();
-        rightTabs.addTab("Aufgaben", createProgressPanel());
-        rightTabs.addTab("Mini-Chat", miniChatPanel);
-
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                mainChatPanel,
-                rightTabs
-        );
-        splitPane.setDividerLocation(900);
-
-        add(splitPane);
-
-        mainChatPanel.getSendButton().addActionListener(e -> {
-            String text = mainChatPanel.getInputField().getText().trim();
-            if (!text.isEmpty()) {
-                sendMainChat(text);
-            }
-        });
-
-        miniChatPanel.getSendButton().addActionListener(e -> {
-            String text = miniChatPanel.getInputField().getText().trim();
-            if (!text.isEmpty()) {
-                sendMiniChat(text);
-            }
-        });
-    }
-
-    // Methoden für Chat
     public void sendMainChat(String msg) {
         mainChatPanel.appendUserMessage(msg);
-        if (gameController != null) {
-            gameController.sendDecision(msg);
-        }
+        if (gameController != null) gameController.sendDecision(msg);
         mainChatPanel.clearInput();
     }
 
@@ -87,9 +90,7 @@ public class ChatUI extends JFrame {
 
     public void sendMiniChat(String msg) {
         miniChatPanel.appendUserMessage(msg);
-        if (gameController != null) {
-            gameController.sendAdvisor(msg);
-        }
+        if (gameController != null) gameController.sendAdvisor(msg);
         miniChatPanel.clearInput();
     }
 
@@ -104,40 +105,49 @@ public class ChatUI extends JFrame {
 
     private JPanel createProgressPanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 1, 10, 10));
+        panel.setBackground(new Color(25, 25, 35));  // Dunkler
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        trustBar = new JProgressBar(0, 100);
-        trustBar.setStringPainted(true);
-        trustBar.setString("Trust in Parliament");
+        trustBar = createStyledBar("Vertrauen im Parlament", new Color(79, 195, 247));
+        mediaBar = createStyledBar("Medienakzeptanz", new Color(255, 202, 40));
+        coalitionBar = createStyledBar("Koalitionsstabilität", new Color(129, 199, 132));
+        healthBar = createStyledBar("Gesundheit", new Color(239, 83, 80));
+        stressBar = createStyledBar("Stresslevel", new Color(66, 165, 245));
+        yearsInOfficeBar = createStyledBar("Amtsjahre", new Color(171, 71, 188));
+        yearsInOfficeBar.setMaximum(4);
+
+        // Abstand zwischen den ProgressBars
+        int spacing = 15;
+
         panel.add(trustBar);
-
-        mediaBar = new JProgressBar(0, 100);
-        mediaBar.setStringPainted(true);
-        mediaBar.setString("Media Approval");
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
         panel.add(mediaBar);
-
-        coalitionBar = new JProgressBar(0, 100);
-        coalitionBar.setStringPainted(true);
-        coalitionBar.setString("Coalition Stability");
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
         panel.add(coalitionBar);
-
-        healthBar = new JProgressBar(0, 100);
-        healthBar.setStringPainted(true);
-        healthBar.setString("Health");
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
         panel.add(healthBar);
-
-        stressBar = new JProgressBar(0, 100);
-        stressBar.setStringPainted(true);
-        stressBar.setString("Stress Level");
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
         panel.add(stressBar);
-
-        yearsInOfficeBar = new JProgressBar(0, 4);
-        yearsInOfficeBar.setStringPainted(true);
-        yearsInOfficeBar.setString("Years In Office");
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
         panel.add(yearsInOfficeBar);
 
         return panel;
     }
+
+
+    private JProgressBar createStyledBar(String title, Color color) {
+        JProgressBar bar = new JProgressBar(0, 100);
+        bar.setString(title);
+        bar.setStringPainted(true);
+        bar.setForeground(color);
+        bar.setBackground(new Color(40, 40, 60));      // dunkler Hintergrund
+        bar.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 90)));  // dezenter Rand
+        bar.setFont(new Font("Segoe UI", Font.BOLD, 16));   // größerer, fetter Text
+        bar.setPreferredSize(new Dimension(200, 30));        // weniger hoch, breiter
+        return bar;
+    }
+
 
     private void printValues() {
         if (playerStats != null) {
@@ -147,6 +157,26 @@ public class ChatUI extends JFrame {
             healthBar.setValue(playerStats.getHealth());
             stressBar.setValue(playerStats.getStressLevel());
             yearsInOfficeBar.setValue(playerStats.getYearsInOffice());
+        }
+    }
+
+    // Optional: Add custom tab styling here
+    private static class ModernTabbedPaneUI extends javax.swing.plaf.basic.BasicTabbedPaneUI {
+        @Override
+        protected void installDefaults() {
+            super.installDefaults();
+            tabAreaInsets.left = 10;
+        }
+
+        @Override
+        protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+            g.setColor(isSelected ? new Color(70, 130, 180) : new Color(45, 45, 70));
+            g.fillRoundRect(x + 4, y + 2, w - 8, h - 4, 12, 12);
+        }
+
+        @Override
+        protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+            // No border
         }
     }
 }

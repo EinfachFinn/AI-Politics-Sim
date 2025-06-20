@@ -1,10 +1,11 @@
 package LLM;
 
 import Frontend.ChatUI;
+import Game.GameController;
 import Player.Player_stats;
 import org.json.JSONObject;
 
-public class LLMResponseParser {
+public class LLMResponseParser extends GameController {
 
     public static String parseAndApplyEngineResponse(String jsonString, Player_stats player, LLM_Logger logger, ChatUI ui) {
         try {
@@ -67,7 +68,7 @@ public class LLMResponseParser {
             JSONObject message = choice.getJSONObject("message");
             String content = message.getString("content");
             logger.logAdvisor(content);
-            ui.printMiniAnswer("Neue Nachricht:" , content);
+            ui.printAdvisorAnswer("Neue Nachricht:" , content);
             return content.trim();
 
         } catch (Exception e) {

@@ -74,3 +74,4 @@ Backend LLM services powered by Together.ai.
 Parameter	Type	Description
 api_key	string	Required for LLM communication
 
+<div style="width: 960px; height: 720px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:960px; height:720px" src="https://lucid.app/documents/embedded/9d0f22d9-7575-45e2-ab8a-88697d496864" id="mcGqXE7CaUN0"></iframe></div>

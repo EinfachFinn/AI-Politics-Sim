@@ -13,14 +13,13 @@ import Game.GameController;
 import Player.Player_stats;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.nio.file.Paths;
 
 public class ChatUI extends JFrame {
 
     private final MainChatPanel mainChatPanel;
-    private final AdvisorChatPanel miniChatPanel;
+    private final AdvisorChatPanel advChatPanel;
 
     private GameController gameController;
     private Player_stats playerStats;
@@ -39,7 +38,7 @@ public class ChatUI extends JFrame {
         } catch (Exception ignored) {}
 
         mainChatPanel = new MainChatPanel(Paths.get("src/background.png"));
-        miniChatPanel = new AdvisorChatPanel(Paths.get("src/advisorbackground.png"));
+        advChatPanel = new AdvisorChatPanel(Paths.get("src/advisorbackground.png"));
 
         JTabbedPane rightTabs = new JTabbedPane();
         rightTabs.setUI(new ModernTabbedPaneUI());
@@ -49,7 +48,7 @@ public class ChatUI extends JFrame {
         UIManager.put("TabbedPane.contentAreaColor", new Color(30, 30, 47));
 
         rightTabs.addTab("Umfragewerte", createProgressPanel());
-        rightTabs.addTab("Berater", miniChatPanel);
+        rightTabs.addTab("Berater", advChatPanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainChatPanel, rightTabs);
         splitPane.setDividerLocation(850);
@@ -63,9 +62,9 @@ public class ChatUI extends JFrame {
             if (!text.isEmpty()) sendMainChat(text);
         });
 
-        miniChatPanel.getSendButton().addActionListener(e -> {
-            String text = miniChatPanel.getInputField().getText().trim();
-            if (!text.isEmpty()) sendMiniChat(text);
+        advChatPanel.getSendButton().addActionListener(e -> {
+            String text = advChatPanel.getInputField().getText().trim();
+            if (!text.isEmpty()) sendAdvisorChat(text);
         });
     }
 
@@ -88,19 +87,19 @@ public class ChatUI extends JFrame {
         mainChatPanel.appendAnswerMessage(headline, answer);
     }
 
-    public void sendMiniChat(String msg) {
-        miniChatPanel.appendUserMessage(msg);
+    public void sendAdvisorChat(String msg) {
+        advChatPanel.appendUserMessage(msg);
         if (gameController != null) gameController.sendAdvisor(msg);
-        miniChatPanel.clearInput();
+        advChatPanel.clearInput();
     }
 
-    public void printMiniAnswer(String headline, String answer) {
-        miniChatPanel.appendAnswerMessage(headline, answer);
+    public void printAdvisorAnswer(String headline, String answer) {
+        advChatPanel.appendAnswerMessage(headline, answer);
     }
 
     public void printKriseAll() {
         mainChatPanel.printKrise();
-        miniChatPanel.printKrise();
+        advChatPanel.printKrise();
     }
 
     private JPanel createProgressPanel() {

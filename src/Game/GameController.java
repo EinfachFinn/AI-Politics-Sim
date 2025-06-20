@@ -12,7 +12,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GameController {
+public class GameController extends LLMClient {
 
     private Player_stats player;
     private LLM_Logger logger;
@@ -147,7 +147,6 @@ public class GameController {
         });
     }
 
-    // Optional: Call this when closing the application
     public void shutdown() {
         singleExecutor.shutdownNow();
     }

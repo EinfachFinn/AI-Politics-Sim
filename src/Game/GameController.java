@@ -9,10 +9,17 @@ import Player.Player_stats;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GameController {
 
+    private Player_stats player;
+    private LLM_Logger logger;
+    private ChatUI ui;
 
+    // Single-Thread-Executor für sequentielle Verarbeitung
+    private final ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
 
     public GameController() {
         this.player = new Player_stats();
@@ -23,14 +30,13 @@ public class GameController {
         logger.logEngine("Es ist der erste Tag im Kanzleramt");
     }
 
-    public void setPlayer(Player_stats player) {this.player = player;}
-    private Player_stats player;
-    private LLM_Logger logger;
+    public void setPlayer(Player_stats player) {
+        this.player = player;
+    }
 
-    private ChatUI ui;
-    public void setUI(ChatUI ui) {this.ui = ui;}
-
-
+    public void setUI(ChatUI ui) {
+        this.ui = ui;
+    }
 
     public void setupNewPlayer() {
         Scanner scanner = new Scanner(System.in);
@@ -38,7 +44,6 @@ public class GameController {
         String name = scanner.nextLine();
         player.setName(name);
 
-        //System.out.println("Wie Schwierigkeitsmultiplikator. 0,5 = Schwer, 1= Mittel, 1.5 = Leicht");
         float difficulty = 1;
         player.setYearsInOffice(0);
         player.setPopularity(Math.round(50 * difficulty));
@@ -46,7 +51,7 @@ public class GameController {
         player.setMediaApproval(Math.round(50 * difficulty));
         player.setCoalitionStability(Math.round(50 * difficulty));
         player.setHealth(Math.round(50 * difficulty));
-        player.setStressLevel(Math.round(50 * 1/difficulty));
+        player.setStressLevel(Math.round(50 * 1 / difficulty));
 
         System.out.println("Wie soll deine Partei heißen?");
         String partyName = scanner.nextLine();
@@ -67,30 +72,27 @@ public class GameController {
         int age = scanner.nextInt();
         player.setAge(age);
 
-
         System.out.println("Hallo " + name + ", du bist jetzt Kanzler der Partei " + partyName + " ! Herzlichen Glückwunsch!");
         System.out.println("Hier sind deine Startwerte: ");
         System.out.println(player.toString());
-
-
     }
 
     public void startGameLoop() {
-        // logger.logEngine("Erster Tag als neu gewählter Kanzler");
-        // logger.logAdvisor("Erster Tag als neu gewählter Kanzler");
-
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("Willst du eine Entscheidung (1) treffen oder mit deinem Politikberater (2) sprechen?");
             int menu = scanner.nextInt();
-            if (menu == 1){decision();}
-            else if (menu == 2){advisor();}
+            scanner.nextLine(); // flush newline
+            if (menu == 1) {
+                decision();
+            } else if (menu == 2) {
+                advisor();
+            }
         }
     }
 
-    public void decision()
-    {
+    public void decision() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\nDeine Entscheidung: ");
         String input = scanner.nextLine();
@@ -99,9 +101,7 @@ public class GameController {
 
     public void advisor() {
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nDeine Frage: ");
-
         String input = scanner.nextLine();
         sendAdvisor(input);
     }
@@ -109,10 +109,9 @@ public class GameController {
     public void sendAdvisor(String adviceMessage) {
         logger.logAdvisor(adviceMessage);
 
-        // Cursor auf Warten setzen
         ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        new Thread(() -> {
+        singleExecutor.submit(() -> {
             try {
                 String jsonResponse = LLMClient.callLLM_Advisor(adviceMessage, player);
                 String message = LLMResponseParser.parseAndApplyAdvisorResponse(jsonResponse, logger, ui);
@@ -120,16 +119,14 @@ public class GameController {
                 System.out.println("Fehler beim Verarbeiten: " + e.getMessage());
                 e.printStackTrace();
             } finally {
-                // Cursor zurücksetzen – wichtig: im Swing-Thread
                 SwingUtilities.invokeLater(() -> ui.setCursor(Cursor.getDefaultCursor()));
             }
-        }).start();
+        });
     }
 
     public void sendDecision(String decisionMessage) {
         boolean neueKrise = Math.random() < 0.5;
         logger.logEngine(decisionMessage);
-
         if (neueKrise) {
             System.out.println("NEUE KRISE");
             ui.printKriseAll();
@@ -137,7 +134,7 @@ public class GameController {
 
         ui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        new Thread(() -> {
+        singleExecutor.submit(() -> {
             try {
                 String jsonResponse = LLMClient.callLLM_Engine(decisionMessage, player, neueKrise);
                 String message = LLMResponseParser.parseAndApplyEngineResponse(jsonResponse, player, logger, ui);
@@ -147,8 +144,11 @@ public class GameController {
             } finally {
                 SwingUtilities.invokeLater(() -> ui.setCursor(Cursor.getDefaultCursor()));
             }
-        }).start();
+        });
     }
 
-
+    // Optional: Call this when closing the application
+    public void shutdown() {
+        singleExecutor.shutdownNow();
+    }
 }
